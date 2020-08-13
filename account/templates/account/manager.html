@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alter alert-{{ message.tags }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="display-3">Manager Page</div>
+{% endblock %}
