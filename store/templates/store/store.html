@@ -1,4 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="display-3">Store</div>
+    {% for product in products %}
+        <div class="card mt-2" style="width: 18rem">
+            <img src="/media/{{ product.image }}" alt="" class="card-img-top">
+            <lengend>{{ product.category }}</lengend>
+            <p class="card-text">{{ product.description }}</p>
+            {% if user.account_type == 'USER' %}
+                <div class="card-footer"><button class="btn btn-primary">Add To Cart</button></div>
+            {% elif user.account_type == "MANAGER" %}
+                <div class="card-footer">
+                    <button class="btn btn-primary">Update</button>
+                    <button class="btn btn-primary">Delete</button>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}

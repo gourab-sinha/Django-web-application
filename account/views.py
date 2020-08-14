@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from account.forms import RegistrationForm
 from django.contrib import messages
 from .models import Account
+from django.contrib.auth.decorators import login_required
 
 
 def manager(request):
@@ -29,6 +30,7 @@ def register(request):
     return render(request, 'account/register.html', {'form': form})
 
 
-def home(request):
-    users = Account.objects.all()
-    return render(request, 'account/home.html', {'users': users})
+@login_required
+def profile(request):
+    return render(request, 'account/profile.html', {})
+
