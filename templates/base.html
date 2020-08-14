@@ -12,13 +12,20 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
   <title>Dphi</title>
+    {% load static %}
 </head>
 
 <body class="bg-light">
   <!-- START HERE -->
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
     <div class="container">
-      <a href="{% url 'store:home' %}" class="navbar-brand">DPhi</a>
+      <a href="{% url 'store:home' %}" class="navbar-brand">
+          {% if user.account_type == "MANAGER" %}
+              Dphi Manager
+          {% else %}
+              Dphi Store
+          {% endif %}
+      </a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -35,12 +42,18 @@
                      <li class="nav-item">
                         <a href="{% url 'account:profile' %}" class="nav-link">Incoming Orders</a>
                      </li>
+                     <li class="nav-item">
+                        <a href="{% url 'account:profile' %}" class="nav-link">New Item</a>
+                     </li>
+                     <li class="nav-item">
+                        <a href="{% url 'account:profile' %}" class="nav-link">Approved Orders</a>
+                     </li>
                  {% elif user.account_type == "USER" %}
                      <li class="nav-item">
                         <a href="{% url 'account:profile' %}" class="nav-link">Orders</a>
                      </li>
                      <li class="nav-item">
-                        <a href="{% url 'account:profile' %}" class="nav-link">Cart</a>
+                        <a href="{% url 'store:cart' %}" class="nav-link">Cart {{ cart_items }}</a>
                      </li>
                  {% endif %}
 
@@ -71,6 +84,27 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
     crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+  <script type="text/javascript">
+      var user = '{{ request.user }}'
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+  </script>
 
 </body>
 

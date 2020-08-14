@@ -1,19 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="display-3">Store</div>
+    <div class="row mt-4">
     {% for product in products %}
-        <div class="card mt-2" style="width: 18rem">
-            <img src="/media/{{ product.image }}" alt="" class="card-img-top">
-            <lengend>{{ product.category }}</lengend>
-            <p class="card-text">{{ product.description }}</p>
-            {% if user.account_type == 'USER' %}
-                <div class="card-footer"><button class="btn btn-primary">Add To Cart</button></div>
-            {% elif user.account_type == "MANAGER" %}
-                <div class="card-footer">
-                    <button class="btn btn-primary">Update</button>
-                    <button class="btn btn-primary">Delete</button>
-                </div>
+        <div class="col-lg-4 my-3">
+        <img style="max-width: 360px;max-height: 180px;overflow: hidden;" src="/media/{{ product.image }}" alt="" class="card-img-top">
+        <div class="box-element product">
+            <h6 class="my-2"><strong>{{ product.name }}</strong></h6>
+            <h6 class="my-2">Category: <strong>{{ product.category }}</strong></h6>
+            <hr>
+            {%if user.account_type == "MANAGER" %}
+                <button class="btn btn-outline-secondary add-btn">Update</button>
+                <button class="btn btn-outline-danger add-btn">Delete</button>
+                <h4 style="display: inline-block; float: right">
+                    <strong>${{ product.price }}</strong>
+                </h4>
+            {% else %}
+                <button data-product={{ product.id }} data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                <a href="#" class="btn btn-outline-success">View</a>
+                <h4 style="display: inline-block; float: right">
+                    <strong>${{ product.price }}</strong>
+                </h4>
             {% endif %}
         </div>
+        </div>
     {% endfor %}
+    </div>
+
 {% endblock %}

@@ -1,4 +1,67 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-    <div class="display-3">Cart</div>
-{% endblock %}
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Category</th>
+                            <th scope="col" class="text-center">Quantity</th>
+                            <th scope="col" class="text-right">Price</th>
+                            <th scope="col" class="text-right">Total</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td><img style="max-height: 50px;max-width: 50px" src="/media/{{ item.product.image }}" /> </td>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.product.category }}</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col">
+                                        <button data-product="{{ item.product.id }}" data-action="add" class="update-cart" style="font-size:10px"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                    <div class="col">
+                                        <p>{{ item.quantity }}</p>
+                                    </div>
+                                    <div class="col">
+                                        <button data-product="{{ item.product.id }}" data-action="remove" class="update-cart" style="font-size:10px"><i class="fas fa-minus"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><input readonly class="form-control" type="text" value="{{ item.product.price }}" /></td>
+                            <td class="text-right">{{ item.get_total }} $</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>Total</strong></td>
+                            <td class="text-right"><strong>{{ order.get_cart_total }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-6">
+                    <a href="{% url 'store:home' %}" class="btn btn-lg btn-block btn-dark">Continue Shopping</a>
+                </div>
+                <div class="col-sm-12 col-md-6 text-right">
+                    <a href="{% url 'store:checkout' %}" class="btn btn-lg btn-block btn-success">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
