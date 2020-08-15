@@ -21,11 +21,24 @@ class Product(models.Model):
         return self.name
 
 
+class CustomerAddress(models.Model):
+    customer = models.ForeignKey(Account, on_delete=models.CASCADE, blank=False, null=False)
+    address = models.CharField(max_length=200, null=False)
+    city = models.CharField(max_length=200, null=False)
+    zip_code = models.CharField(max_length=30, null=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address
+
+
 class Order(models.Model):
     customer = models.ForeignKey(Account, on_delete=models.SET_NULL, blank=True, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
-    complete = models.BooleanField(default=False, null=True, blank=False)
+    complete = models.BooleanField(default=False, null=False, blank=False)
     transaction_id = models.CharField(max_length=200, null=True)
+    shipping_address = models.ForeignKey(CustomerAddress, on_delete=models.SET_NULL, null=True)
+    is_order_placed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return str(self.id)
@@ -58,16 +71,18 @@ class OrderItem(models.Model):
         return total
 
 
-class ShippingAddress(models.Model):
-    customer = models.ForeignKey(Account, on_delete=models.SET_NULL, blank=True, null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
-    address = models.CharField(max_length=200, null=False)
-    city = models.CharField(max_length=200, null=False)
-    zip_code = models.CharField(max_length=30, null=False)
-    date_added = models.DateTimeField(auto_now_add=True)
+class OrderApprove(models.Model):
+    customer = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    order_items = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, null=True)
+    approve_status = models.CharField(max_length=30, default="On Pending", null=False)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.address
+        return str(self.id)
+
+
+
+
 
 
 

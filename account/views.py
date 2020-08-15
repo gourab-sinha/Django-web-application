@@ -22,8 +22,7 @@ def register(request):
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email')
-            messages.success(request, f'Your account has been created! User your credential to login!')
-            account_type = form.cleaned_data.get('account_type')
+            messages.success(request, f'Your account {email} has been created! Use your credential to login!')
             return redirect('account:login')
     else:
         form = RegistrationForm()

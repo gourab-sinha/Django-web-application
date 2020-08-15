@@ -40,17 +40,17 @@
                  </li>
                  {% if user.account_type == "MANAGER" %}
                      <li class="nav-item">
-                        <a href="{% url 'account:profile' %}" class="nav-link">Incoming Orders</a>
+                        <a href="{% url 'store:orders_status' %}" class="nav-link">Incoming Orders</a>
                      </li>
                      <li class="nav-item">
                         <a href="{% url 'account:profile' %}" class="nav-link">New Item</a>
                      </li>
                      <li class="nav-item">
-                        <a href="{% url 'account:profile' %}" class="nav-link">Approved Orders</a>
+                        <a href="{% url 'store:orders_approved' %}" class="nav-link">Approved Orders</a>
                      </li>
                  {% elif user.account_type == "USER" %}
                      <li class="nav-item">
-                        <a href="{% url 'account:profile' %}" class="nav-link">Orders</a>
+                        <a href="{% url 'store:orders'%}" class="nav-link">Orders</a>
                      </li>
                      <li class="nav-item">
                         <a href="{% url 'store:cart' %}" class="nav-link">Cart {{ cart_items }}</a>
@@ -85,6 +85,7 @@
     crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order_status.js' %}"></script>
   <script type="text/javascript">
       var user = '{{ request.user }}'
 
@@ -104,6 +105,11 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+
+      function loginFirst() {
+          alert("Please login in to add to cart!")
+
+      }
   </script>
 
 </body>

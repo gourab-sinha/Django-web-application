@@ -8,35 +8,25 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col"> </th>
+                            <th scope="col">Order ID</th>
                             <th scope="col">Product</th>
-                            <th scope="col">Category</th>
-                            <th scope="col" class="text-center">Quantity</th>
-                            <th scope="col" class="text-right">Price</th>
-                            <th scope="col" class="text-right">Total</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Seller Name</th>
+                            <th scope="col">Seller ID</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in items %}
+                        {% for item in order_with_details %}
                         <tr>
-                            <td><img style="max-height: 50px;max-width: 50px" src="/media/{{ item.product.image }}" /> </td>
-                            <td>{{ item.product.name }}</td>
-                            <td>{{ item.product.category }}</td>
-                            <td>
-                                <div class="row">
-                                    <div class="col">
-                                        <button data-product="{{ item.product.id }}" data-action="add" class="update-cart" style="font-size:10px"><i class="fas fa-plus"></i></button>
-                                    </div>
-                                    <div class="col">
-                                        <p>{{ item.quantity }}</p>
-                                    </div>
-                                    <div class="col">
-                                        <button data-product="{{ item.product.id }}" data-action="remove" class="update-cart" style="font-size:10px"><i class="fas fa-minus"></i></button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><input readonly class="form-control" type="text" value="{{ item.product.price }}" /></td>
-                            <td class="text-right">{{ item.get_total }} $</td>
+                            <td>{{ item.order_id }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price }}</td>
+                            <td>{{ item.seller_name }}</td>
+                            <td>{{ item.seller_id }}</td>
+                            <td>{{ item.status }}</td>
                         </tr>
                         {% endfor %}
                         <tr>

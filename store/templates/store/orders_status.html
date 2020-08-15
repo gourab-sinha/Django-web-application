@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in orders %}
+                        <tr>
+                            <td>{{ item.order_id }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price }}</td>
+                            <td>{{ item.customer }}</td>
+                            <td>
+                                {% if item.status == "On Pending" %}
+                                <div class="row">
+                                    <div class="col">
+                                        {{ item.approve_status }}
+                                    </div>
+                                    <div class="col">
+                                        <button data-status="{{ item.approve_id }}" data-action="approve" class="update-status" style="font-size:10px"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                    </div>
+                                    <div class="col">
+                                        <button data-status="{{ item.approve_id }}" data-action="reject" class="update-status" style="font-size:10px"><i class="fa fa-ban" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                                {% else %}
+                                    {{ item.approve_status }}
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-6">
+                    <a href="{% url 'store:home' %}" class="btn btn-lg btn-block btn-dark">Products</a>
+                </div>
+                <div class="col-sm-12 col-md-6 text-right">
+                    {% if order.get_cart_total == 0 %}
+                        <a href="#" class="btn btn-lg btn-block btn-success disabled">Approved Orders</a>
+                    {% else %}
+                        <a href="#" class="btn btn-lg btn-block btn-success">Checkout</a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
