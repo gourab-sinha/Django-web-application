@@ -28,17 +28,21 @@
                                 {% if item.status == "On Pending" %}
                                 <div class="row">
                                     <div class="col">
-                                        {{ item.approve_status }}
+                                        {{ item.status }}
                                     </div>
                                     <div class="col">
-                                        <button data-status="{{ item.approve_id }}" data-action="approve" class="update-status" style="font-size:10px"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                        <button data-status="{{ item.approve_id }}" data-action="approve"
+                                                class="update-status" style="font-size:20px">
+                                            <i class="fa fa-check" aria-hidden="true"></i></button>
                                     </div>
                                     <div class="col">
-                                        <button data-status="{{ item.approve_id }}" data-action="reject" class="update-status" style="font-size:10px"><i class="fa fa-ban" aria-hidden="true"></i></button>
+                                        <button data-status="{{ item.approve_id }}" data-action="reject"
+                                                class="update-status" style="font-size:20px">
+                                            <i class="fa fa-ban" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                                 {% else %}
-                                    {{ item.approve_status }}
+                                    {{ item.status }}
                                 {% endif %}
 
                             </td>
@@ -51,15 +55,9 @@
         <div class="col mb-2">
             <div class="row">
                 <div class="col-sm-12  col-md-6">
-                    <a href="{% url 'store:home' %}" class="btn btn-lg btn-block btn-dark">Products</a>
-                </div>
-                <div class="col-sm-12 col-md-6 text-right">
-                    {% if order.get_cart_total == 0 %}
-                        <a href="#" class="btn btn-lg btn-block btn-success disabled">Approved Orders</a>
-                    {% else %}
-                        <a href="#" class="btn btn-lg btn-block btn-success">Checkout</a>
-                    {% endif %}
-
+                    <a style="float: right" href="{% url 'store:home' %}"
+                       class="btn btn-lg btn-block btn-dark">Products
+                    </a>
                 </div>
             </div>
         </div>

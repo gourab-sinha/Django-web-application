@@ -108,7 +108,6 @@ def orders(request):
     context = get_context(request)
     orders_set = Order.objects.filter(customer=request.user)
     order_with_details = []
-    i = 0
     for order_id in orders_set:
         order_items = OrderItem.objects.filter(order_id=order_id.id)
         for order_item in order_items:
@@ -124,24 +123,50 @@ def orders(request):
     return render(request, 'store/orders.html', context)
 
 
-@login_required
-def orders_status(request, order_approve_item_id=None):
-    orders_to_approve = []
+def get_orders(request, is_order_history):
+    orders_list = []
     products = Product.objects.filter(seller=request.user)
     for product in products:
         ordered_items = OrderItem.objects.filter(product_id=product.id)
         for order_item in ordered_items:
-            orders_approve_pending = OrderApprove.objects.filter(order_items_id=order_item.id,
+            if is_order_history:
+                order_approve_item = OrderApprove.objects.filter(order_items_id=
+                                                                 order_item.id).exclude(approve_status="On Pending")
+            else:
+                order_approve_item = OrderApprove.objects.filter(order_items_id=order_item.id,
                                                                  approve_status="On Pending")
-            if orders_approve_pending:
-                orders_approve_pending = orders_approve_pending[0]
-                order_details = {'order_id': orders_approve_pending.order.id, 'product_name': product.name,
+
+            if order_approve_item:
+                order_approve_item = order_approve_item[0]
+                order_details = {'order_id': order_approve_item.order.id, 'product_name': product.name,
                                  'price': product.price, 'quantity': order_item.quantity,
-                                 'status': orders_approve_pending.approve_status,
-                                 'customer': orders_approve_pending.customer.email,
-                                 'approve_id': orders_approve_pending.id}
-                orders_to_approve.append(order_details)
-                print(order_details)
+                                 'status': order_approve_item.approve_status,
+                                 'customer': order_approve_item.customer.email,
+                                 'approve_id': order_approve_item.id}
+                orders_list.append(order_details)
+                print(order_details['status'])
+
+    return orders_list
+
+
+@login_required
+def orders_status(request):
+    orders_to_approve = get_orders(request, False)
+    # products = Product.objects.filter(seller=request.user)
+    # for product in products:
+    #     ordered_items = OrderItem.objects.filter(product_id=product.id)
+    #     for order_item in ordered_items:
+    #         orders_approve_pending = OrderApprove.objects.filter(order_items_id=order_item.id,
+    #                                                              approve_status="On Pending")
+    #         if orders_approve_pending:
+    #             orders_approve_pending = orders_approve_pending[0]
+    #             order_details = {'order_id': orders_approve_pending.order.id, 'product_name': product.name,
+    #                              'price': product.price, 'quantity': order_item.quantity,
+    #                              'status': orders_approve_pending.approve_status,
+    #                              'customer': orders_approve_pending.customer.email,
+    #                              'approve_id': orders_approve_pending.id}
+    #             orders_to_approve.append(order_details)
+    #             print(order_details)
 
     return render(request, 'store/orders_status.html', {'orders': orders_to_approve})
 
@@ -165,8 +190,7 @@ def update_status(request):
     return JsonResponse('Item was added', safe=False)
 
 
-
-
 @login_required
-def orders_approved(request):
-    pass
+def orders_history(request):
+    order_list = get_orders(request, True)
+    return render(request, 'store/orders_status.html', {'orders': order_list})
