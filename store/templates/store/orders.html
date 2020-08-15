@@ -12,8 +12,10 @@
                             <th scope="col">Product</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Price</th>
+                            <th scope="col">Total</th>
                             <th scope="col">Seller Name</th>
                             <th scope="col">Seller ID</th>
+                            <th scope="col">Transaction ID</th>
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
@@ -24,19 +26,13 @@
                             <td>{{ item.product_name }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>{{ item.price }}</td>
+                            <td>{{ item.total }}</td>
                             <td>{{ item.seller_name }}</td>
                             <td>{{ item.seller_id }}</td>
+                            <td>{{ item.transaction_id }}</td>
                             <td>{{ item.status }}</td>
                         </tr>
                         {% endfor %}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>Total</strong></td>
-                            <td class="text-right"><strong>{{ order.get_cart_total }}</strong></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -45,14 +41,6 @@
             <div class="row">
                 <div class="col-sm-12  col-md-6">
                     <a href="{% url 'store:home' %}" class="btn btn-lg btn-block btn-dark">Continue Shopping</a>
-                </div>
-                <div class="col-sm-12 col-md-6 text-right">
-                    {% if order.get_cart_total == 0 %}
-                        <a href="#" class="btn btn-lg btn-block btn-success disabled">Please Add Item first</a>
-                    {% else %}
-                        <a href="{% url 'store:checkout'  order.id %}" class="btn btn-lg btn-block btn-success">Checkout</a>
-                    {% endif %}
-
                 </div>
             </div>
         </div>
