@@ -1,6 +1,5 @@
 from django import forms
 from store.models import *
-from account.models import *
 
 
 class CustomerAddressRegister(forms.ModelForm):
@@ -19,3 +18,15 @@ class OrderApproveStatus(forms.ModelForm):
     class Meta:
         model = OrderApprove
         fields = ["approve_status"]
+
+
+class ProductRegister(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+
+class CategoryRegister(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'

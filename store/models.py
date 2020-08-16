@@ -22,7 +22,7 @@ class Product(models.Model):
 
 
 class CustomerAddress(models.Model):
-    customer = models.ForeignKey(Account, on_delete=models.CASCADE, blank=False, null=False)
+    customer = models.ForeignKey(Account, on_delete=models.CASCADE, blank=False, null=True)
     address = models.CharField(max_length=200, null=False)
     city = models.CharField(max_length=200, null=False)
     zip_code = models.CharField(max_length=30, null=False)
@@ -36,9 +36,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Account, on_delete=models.SET_NULL, blank=True, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=False, blank=False)
-    transaction_id = models.CharField(max_length=200, null=True)
     shipping_address = models.ForeignKey(CustomerAddress, on_delete=models.SET_NULL, null=True)
-    is_order_placed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return str(self.id)
@@ -72,10 +70,17 @@ class OrderItem(models.Model):
 
 
 class OrderApprove(models.Model):
-    customer = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name="customer")
     order_items = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, null=True)
     approve_status = models.CharField(max_length=30, default="On Pending", null=False)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    seller = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name="seller")
+    product_name = models.CharField(max_length=30, default="Product", null=True)
+    price = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0)
+    total = models.IntegerField(default=0)
+    transaction_id = models.CharField(max_length=30)
+    seller_name = models.CharField(max_length=30, default="Unknown", null=True)
 
     def __str__(self):
         return str(self.id)

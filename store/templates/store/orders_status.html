@@ -29,24 +29,24 @@
                             <td>{{ item.customer }}</td>
                             <td>{{ item.transaction_id }}</td>
                             <td>
-                                {% if item.status == "On Pending" %}
+                                {% if item.approve_status == "On Pending" %}
                                 <div class="row">
                                     <div class="col">
-                                        {{ item.status }}
+                                        {{ item.approve_status }}
                                     </div>
                                     <div class="col">
-                                        <button data-status="{{ item.approve_id }}" data-action="approve"
+                                        <button data-status="{{ item.id }}" data-action="approve"
                                                 class="update-status" style="font-size:20px">
                                             <i class="fa fa-check" aria-hidden="true"></i></button>
                                     </div>
                                     <div class="col">
-                                        <button data-status="{{ item.approve_id }}" data-action="reject"
+                                        <button data-status="{{ item.id }}" data-action="reject"
                                                 class="update-status" style="font-size:20px">
                                             <i class="fa fa-ban" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                                 {% else %}
-                                    {{ item.status }}
+                                    {{ item.approve_status }}
                                 {% endif %}
 
                             </td>

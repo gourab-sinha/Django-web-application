@@ -10,8 +10,8 @@
                 <p class="my-2"><strong>Description: {{ product.description }}</strong> </p>
                 <hr>
                 {%if user.account_type == "MANAGER" %}
-                    <button class="btn btn-outline-secondary add-btn">Update</button>
-                    <button class="btn btn-outline-danger add-btn">Delete</button>
+                    <a class="btn btn-outline-secondary add-btn" href="{% url 'store:update_product' product.id %}">Update</a>
+                    <a class="btn btn-outline-danger add-btn" href="{% url 'store:delete_product' product.id %}">Delete</a>
                     <h4 style="display: inline-block; float: right">
                         <strong>${{ product.price }}</strong>
                     </h4>

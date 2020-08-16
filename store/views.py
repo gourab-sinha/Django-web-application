@@ -5,6 +5,7 @@ import json
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import string, random
 
 
 def get_context(request):
@@ -35,11 +36,13 @@ def home(request):
     return render(request, 'store/store.html', context)
 
 
+@login_required
 def cart(request):
     context = get_context(request)
     return render(request, 'store/cart.html', context)
 
 
+@login_required
 def checkout(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     form = OrderRegister(request.POST or None, instance=order)
@@ -48,10 +51,21 @@ def checkout(request, order_id):
         order = form.save(commit=False)
         order.complete = True
         order.save()
+        trxn_id = str(order_id) + ''.join(random.choices(string.ascii_uppercase + string.digits, k=20))
         order_items = OrderItem.objects.filter(order=order)
         for order_item in order_items:
-            order_item_obj = OrderItem.objects.filter(id=order_item.id)
-            order_approve = OrderApprove.objects.create(customer=request.user, order=order, order_items_id=order_item.id )
+            order_approve = OrderApprove.objects.create(customer=request.user,
+                                                        order=order,
+                                                        order_items_id=order_item.id,
+                                                        seller=order_item.product.seller,
+                                                        product_name=order_item.product.name,
+                                                        price=order_item.product.price,
+                                                        total=order.get_cart_items,
+                                                        quantity=order_item.quantity,
+                                                        approve_status="On Pending",
+                                                        transaction_id=trxn_id,
+                                                        seller_name=order_item.product.seller.first_name
+                                                        )
             order_approve.save()
 
         messages.success(request, f'Order Successfully Placed! But yet to approve by Seller!')
@@ -66,6 +80,7 @@ def checkout(request, order_id):
     return render(request, 'store/checkout.html', context)
 
 
+@login_required
 def update_item(request):
     data = json.loads(request.body)
     product_id = data['productId']
@@ -89,6 +104,7 @@ def update_item(request):
     return JsonResponse('Item was added', safe=False)
 
 
+@login_required
 def add_address(request):
     context = get_context(request)
     if request.method == "POST":
@@ -104,73 +120,27 @@ def add_address(request):
     return render(request, 'store/address.html', context)
 
 
+@login_required
 def orders(request):
     context = get_context(request)
-    orders_set = Order.objects.filter(customer=request.user)
-    order_with_details = []
-    for order_id in orders_set:
-        order_items = OrderItem.objects.filter(order_id=order_id.id)
-        for order_item in order_items:
-            product = Product.objects.filter(id=order_item.product_id)[0]
-            order_approve = OrderApprove.objects.filter(order_items_id=order_item.id)[0]
-            seller = Account.objects.filter(id=product.seller_id)[0]
-            entry = {'order_id': order_id.id, 'product_name': product.name, 'quantity': order_item.quantity,
-                     'price': product.price, 'status': order_approve.approve_status, 'seller_name': seller.first_name,
-                     'seller_id': seller.id}
-            order_with_details.append(entry)
-
-    context['order_with_details'] = order_with_details
+    orders_set = OrderApprove.objects.filter(customer=request.user)
+    context['order_with_details'] = orders_set
     return render(request, 'store/orders.html', context)
 
 
 def get_orders(request, is_order_history):
-    orders_list = []
-    products = Product.objects.filter(seller=request.user)
-    for product in products:
-        ordered_items = OrderItem.objects.filter(product_id=product.id)
-        for order_item in ordered_items:
-            if is_order_history:
-                order_approve_item = OrderApprove.objects.filter(order_items_id=
-                                                                 order_item.id).exclude(approve_status="On Pending")
-            else:
-                order_approve_item = OrderApprove.objects.filter(order_items_id=order_item.id,
-                                                                 approve_status="On Pending")
-
-            if order_approve_item:
-                order_approve_item = order_approve_item[0]
-                order_details = {'order_id': order_approve_item.order.id, 'product_name': product.name,
-                                 'price': product.price, 'quantity': order_item.quantity,
-                                 'status': order_approve_item.approve_status,
-                                 'customer': order_approve_item.customer.email,
-                                 'approve_id': order_approve_item.id}
-                orders_list.append(order_details)
-                print(order_details['status'])
-
-    return orders_list
+    if is_order_history:
+        return OrderApprove.objects.filter(seller=request.user).exclude(approve_status="On Pending")
+    return OrderApprove.objects.filter(seller=request.user, approve_status="On Pending")
 
 
 @login_required
 def orders_status(request):
     orders_to_approve = get_orders(request, False)
-    # products = Product.objects.filter(seller=request.user)
-    # for product in products:
-    #     ordered_items = OrderItem.objects.filter(product_id=product.id)
-    #     for order_item in ordered_items:
-    #         orders_approve_pending = OrderApprove.objects.filter(order_items_id=order_item.id,
-    #                                                              approve_status="On Pending")
-    #         if orders_approve_pending:
-    #             orders_approve_pending = orders_approve_pending[0]
-    #             order_details = {'order_id': orders_approve_pending.order.id, 'product_name': product.name,
-    #                              'price': product.price, 'quantity': order_item.quantity,
-    #                              'status': orders_approve_pending.approve_status,
-    #                              'customer': orders_approve_pending.customer.email,
-    #                              'approve_id': orders_approve_pending.id}
-    #             orders_to_approve.append(order_details)
-    #             print(order_details)
-
     return render(request, 'store/orders_status.html', {'orders': orders_to_approve})
 
 
+@login_required
 def update_status(request):
     data = json.loads(request.body)
     approve_id = data['approve_status']
@@ -194,3 +164,86 @@ def update_status(request):
 def orders_history(request):
     order_list = get_orders(request, True)
     return render(request, 'store/orders_status.html', {'orders': order_list})
+
+
+@login_required
+def product_create(request):
+    if request.method == "POST":
+        form = ProductRegister(request.POST, request.FILES)
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            img = form.cleaned_data.get("image")
+            desc = form.cleaned_data.get("description")
+            seller = form.cleaned_data.get("seller")
+            price = form.cleaned_data.get("price")
+            category = form.cleaned_data.get("category")
+            new_product = Product.objects.create(name=name,
+                                                 image=img,
+                                                 description=desc,
+                                                 seller=seller,
+                                                 price=price,
+                                                 category=category)
+            new_product.save()
+            messages.success(request, f'Product added!')
+            return redirect('store:home')
+
+    form = ProductRegister()
+    form.fields['seller'].queryset = Account.objects.filter(id=request.user.id)
+    return render(request, 'store/product_register.html', {'form': form})
+
+
+@login_required
+def update_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    form = ProductRegister(request.POST or None, instance=product)
+
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.name = form.cleaned_data.get("name")
+        product.image = form.cleaned_data.get("image")
+        product.description = form.cleaned_data.get("description")
+        product.seller = form.cleaned_data.get("seller")
+        product.price = form.cleaned_data.get("price")
+        product.category = form.cleaned_data.get("category")
+        product.save()
+        messages.success(request, f'Product details updated!')
+        return redirect('store:home')
+
+    return render(request, 'store/update_product.html', {'form': form})
+
+
+@login_required
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    product.delete()
+
+    return redirect('store:home')
+
+
+@login_required
+def add_category(request):
+    if request.method == "POST":
+        form = CategoryRegister(request.POST)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.category = form.cleaned_data.get('category')
+            category.save()
+            return redirect('store:home')
+        else:
+            messages.warning(request, f'Category already present!')
+
+    form = CategoryRegister()
+    category_list = Category.objects.all()
+    return render(request, 'store/add_category.html', {'form': form, 'categories': category_list})
+
+
+@login_required
+def update_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    form = CategoryRegister(request.POST or None, instance=category)
+    if form.is_valid():
+        category.category = form.cleaned_data.get('category')
+        category.save()
+        return redirect('store:home')
+
+    return render(request, 'store/update_category.html', {'form': form})
