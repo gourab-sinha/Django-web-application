@@ -33,3 +33,12 @@ def register(request):
 def profile(request):
     return render(request, 'account/profile.html', {})
 
+
+@login_required
+def update_profile(request):
+    form = RegistrationForm(request.POST or None, instance=request.user)
+    if form.is_valid():
+        form.save()
+        return redirect('account:profile')
+
+    return render(request, 'account/update_profile.html', {'form': form})

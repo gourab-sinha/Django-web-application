@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="display-3">{{ user.username }}</div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                First Name: {{ user.first_name }}
+                <br>
+                Last Name: {{ user.last_name }}
+            </div>
+            <div class="row">
+                {{ user.email }}
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'account:update_profile' %}" class="btn btn-primary btn-md">Update Profile</a>
+        </div>
+    </div>
+
 {% endblock %}
