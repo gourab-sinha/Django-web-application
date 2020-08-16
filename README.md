@@ -53,7 +53,7 @@ Will add soon.
 A. Create superuser to handle the reset password feature as of now. In future I will add reset feature with email as recovery method.
 ```python manange.py createsuperuser``` Required fields - First Name, Last Name, Email, Password, Confirm Password. 
 
-B. If DB delete if you run into problem and then create again.
+B. If DB got deleted, if you run into problem and then create again.
 paste code below to get the python3 compatiable modules and packages.
 1. sudo apt-get -qqy install python3 python3-pip
 2. sudo pip3 install --upgrade pip
@@ -66,4 +66,4 @@ C. If python3 manage.py gives error that might be for dos and unix format differ
 D. Unreachable issue may be caused due to trying to access using ```https://``` 
 
 # Note
-This project was done as part of the Dphi Web Development Assigned for the Web Development Role. This project was done me only. 
+This project was done as part of the Dphi Web Development Assigned for the Web Development Role. This project was done by me only. 
