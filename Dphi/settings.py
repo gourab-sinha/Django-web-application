@@ -25,7 +25,7 @@ SECRET_KEY = 'mf&#n5eg2)#3l2l72515gt0)my(caq7gsoq5tqykb!wdb517g6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["dphi.herokuapp.com"]
 
 
 # Application definition
